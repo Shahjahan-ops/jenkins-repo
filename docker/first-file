@@ -1,0 +1,27 @@
+FROM node:17.9.0
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+RUN npm run lint && npm run build
+################
+multistage-docker
+#################
+FROM node:17.9.0-alpine3.15
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
+RUN npm install --only=production
+
+COPY distapp ./
+
+EXPOSE 3000
+
+ENTRYPOINT [ "node","./app.js" ]
